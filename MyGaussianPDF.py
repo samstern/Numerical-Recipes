@@ -65,11 +65,11 @@ def monteCarlo(a,b,maxY,numPoints, sigma, mu):
 	rectArea=maxY*(b-a)
 	counter=0
 
-	for i in range(0:numPoints):
-		x=toRangeAB(a,b,rand.random()
+	for i in range(0,numPoints):
+		x=toRangeAB(a,b,rand.random())
 		y=toRangeFmax(maxY,rand.random())
-		if y<maxY:
-			counter++
+		if y<gaussianFx(x,sigma,mu):
+			counter=counter+1
 		else:
 			pass
 
