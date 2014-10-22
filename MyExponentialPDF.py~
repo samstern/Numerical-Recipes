@@ -29,8 +29,6 @@ class PDF:
 
 	#naively finds the maximum of a function between a and b
     def maxValue(self,a,b,stepSize):
-        #xs= [x for x in np.arange(a,b,stepSize)]
-        #y = [self.evaluate(x) for x in [x for x in np.arange(a,b,stepSize)]]
         return max([self.evaluate(x) for x in [x for x in np.arange(a,b,stepSize)]])
         #return 0
 
@@ -54,7 +52,7 @@ class ExponentialPDF(PDF):
         while fromExponential==False:
             x1=rand.random()
             x1=self.toRangeAB(self.a,self.b,x1)
-            y1= self.evaluate(x1)
+            y1=self.evaluate(x1)
             y2=self.toRangeFmax(self.maxVal, rand.random())
             if y2<y1:
                 fromExponential=True
@@ -112,30 +110,52 @@ def main():
     MLEst = (sum(values))/targetValue 
     print MLEst
 
-    #plotting histogram
+
+    hist1, histEdges1 = np.histogram(values, bins=50)
+ #   xData = [(histEdges[i]+histEdges[i+1])/2 for i in range(0,len(histEdges)-1)]
+ #   yData = [fitFunc(x,2.2) for x in xData]
+    popt1, pcov1 = opt.curve_fit(fitFunc,histEdges[1:len(histEdges1)],hist1)
+    print np.exp(popt1)
+
+    hist2, histEdges2 = np.histogram(values, bins=50)
+ #   xData = [(histEdges[i]+histEdges[i+1])/2 for i in range(0,len(histEdges)-1)]
+ #   yData = [fitFunc(x,2.2) for x in xData]
+    popt2, pcov2 = opt.curve_fit(fitFunc,histEdges[1:len(histEdges2)],hist2)
+    print np.exp(popt2)
+    #plt.bar(xData,yData)
+    #plt.show()
+
+#    plotting histogram
 #    plt.hist(values, bins=15)
 #    plt.show()
 
-    paramEstimates = [0 for x in range(0,1000)]
-    for i in range(0,len(paramEstimates)):
-        xs = np.vectorize(fitFunc(values,2.2))
-        popt, pcov = opt.curve_fit(fitFunc,xs,values)	
-        paramEstimates[i]=popt
-    print np.mean(paramEstimates)
- 
-	#calculating monte carlo accuracy
-'''    numDels=100#number of times
-    trueIntegral=expo.integralAnalytic(b)
-    dels = [0 for x in range(0,numDels)]
-    sumDels = 0
-    sumSquares =0
-    for i in range(0,numDels):
-        dels[i]=abs(trueIntegral-expo.integralNumeric(numPoints))
-        #print dels[i]
-        sumSquares = sumSquares + (dels[i]**2)
-        sumDels = sumDels + dels[i]
+
+ #   paramEstimates = [0 for x in range(0,1000)]
+#    popt = opt.minimize(expo.evaluate,1)
+#    print popt
+ #   for i in range(0,len(paramEstimates)):
+ #       xs = np.linspace(a,b,len(values))
+ #       popt, pcov = opt.curve_fit(fitFunc,xs,values)	
+ #       paramEstimates[i]=popt
+ #   print np.mean(paramEstimates)
+ #   plt.hist(paramEstimates, bins = 15)
+ #   plt.show
 	
-    std = math.sqrt(sumSquares/(numDels-1))'''
+
+
+#calculating monte carlo accuracy
+#    numDels=100#number of times
+#    trueIntegral=expo.integralAnalytic(b)
+#    dels = [0 for x in range(0,numDels)]
+#    sumDels = 0
+#    sumSquares =0
+#    for i in range(0,numDels):
+#        dels[i]=abs(trueIntegral-expo.integralNumeric(numPoints))
+#        #print dels[i]
+#        sumSquares = sumSquares + (dels[i]**2)
+#        sumDels = sumDels + dels[i]
+#	
+#    std = math.sqrt(sumSquares/(numDels-1))'''
 
 
 

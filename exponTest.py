@@ -1,14 +1,15 @@
 import numpy as np
-import matplotlib.pyplot as plt
 from scipy.optimize import curve_fit
-
-def fitFunc(x,t):
-    return (1/t)*np.exp(-x/t)
-
+def func(x, a, b, c):
+    return a * np.exp(-b * x) + c
 
 
-xs = np.linspace(0,15,1000)
-temp = fitFunc(xs,2.2)
+xdata = np.linspace(0, 4, 50)
+y = func(xdata, 2.5, 1.3, 0.5)
+ydata = y + 0.2 * np.random.normal(size=len(xdata))
 
-fitParams,fitCovs = curve_fit(fitFunc,xs,temp)
-print fitParams
+
+popt, pcov = curve_fit(func, xdata, ydata)
+print popt
+
+
