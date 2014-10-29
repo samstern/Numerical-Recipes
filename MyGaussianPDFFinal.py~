@@ -29,7 +29,10 @@ class PDF:
 
 	#naively finds the maximum of a function between a and b
     def maxValue(self,a,b,stepSize):
+        #xs= [x for x in np.arange(a,b,stepSize)]
+        #y = [self.evaluate(x) for x in [x for x in np.arange(a,b,stepSize)]]
         return max([self.evaluate(x) for x in [x for x in np.arange(a,b,stepSize)]])
+        #return 0
 
 #gaussian pdf which extends the PDF class
 class GaussianPDF(PDF):

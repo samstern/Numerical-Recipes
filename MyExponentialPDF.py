@@ -18,9 +18,9 @@ class ExponentialPDF(PDF):
 
 	#normal exponential
     def evaluate(self, x):
-	coef=self.tau**-1
-	expon=-x*(self.tau**-1)
-        return coef*math.exp(expon)
+	    coef=self.tau**-1
+	    expon=-x*(self.tau**-1)
+            return coef*math.exp(expon)
 
 	#generates a new random number from a exponential distribution
     def next(self):
@@ -43,36 +43,51 @@ def fitFunc(x,t):
     return (1/t)*np.exp(-x/t)
 
 def nll(vals,tau):
-	fitF = [0 for x in range(0,len(vals))]
-	for i in range(0,len(vals)):
-		fitF[i] = fitFunc(vals[i],tau)
-		#if fitF[i] < 0.000000001:
-		#	fitF[i] = 0.0001
-	return -sum([np.log(fitF[x]) for x in range(0,len(fitF))])
+    return -sum([np.log2(fitFunc(vals[x],tau)) for x in range(0,len(vals))])
+#    for i in range(0,len(vals)):
+#        fitF[i] = fitFunc(vals[i],tau)
+#        if fitF[i] < 0.000000001:
+#            fitF[i] = 0.000001
+#    return -sum([np.log(fitF[x]) for x in range(0,len(fitF))])
 
 def minimize(vals):
 
-	stepSize = 0.1
-	improvement = True
-	initialTau = 2
-	tau=initialTau
-	iterations=0
-	while improvement:
-		if math.fabs(nll(vals, tau+stepSize) - nll(vals,tau)) >30 and iterations <=1000:
-			stepSize *=1.2
-			tau = tau+stepSize
-			iterations+=1
-		elif math.fabs(nll(vals, tau+stepSize) - nll(vals,tau)) >5 and iterations <=1000:
-				stepSize = 0.1
-				tau = tau+stepSize
-				iterations+=1
-		elif math.fabs(nll(vals, tau+stepSize) - nll(vals,tau)) >0.2 and iterations <=1000:
-				stepSize*=0.5
-				tau = tau+stepSize
-				iterations+=1
-		else:
-			improvement=False
-	return tau
+    stepSize = 0.01
+    improvement = True
+    initialTau = 2.0
+    tau=initialTau
+    currentNLL = nll(vals,tau)
+#    iterations=0
+#    print "here"
+#    a,b =opt.curve_fit(fitFunc,vals,[fitFunc(vals[x],initialTau) for x in range(0,len(vals))])
+#    return a
+    while improvement:
+        nextNLL = nll(vals, tau+stepSize)
+        if nextNLL < currentNLL:
+            tau=tau+stepSize
+            currentNLL=nextNLL
+        else:
+            improvement=False
+    return tau
+'''        if math.fabs(nextNLL - currentNLL) >2:
+#            print "here"
+            stepSize *=1.2
+            tau = tau+stepSize
+            currentNLL = nextNLL
+#            iterations+=1
+        elif math.fabs(nextNLL - currentNLL) >0.1:
+#            print "here2"
+            stepSize = 0.01
+            tau = tau+stepSize
+            currentNLL = nextNLL
+#            iterations+=1
+        elif math.fabs(nextNLL - currentNLL) >0.00001 and iterations <=1000:
+#            print "here3"
+            stepSize*=0.5
+            tau = tau+stepSize
+            currentNLL = nextNLL
+            iterations+=1'''
+
 				
 def runI():
 	#defines range
@@ -94,18 +109,18 @@ def runI():
 
 
 	#Maximum Likelihood estimation of tau by taking derivative of log likelihood, setting it to 0 and solving for tau	
- #   MLEst = (sum(values))/targetValue 
+#    MLEst = (sum(values))/targetValue 
 #    print MLEst
 
     tauPredicted = minimize(values)
     return tauPredicted
 	
 def main():
-	f = open("decayTimes.txt","w")
-	tau = [0 for x in xrange(0,200)]
+	f = open("decayTimesTest.txt","w")
+	tau = [0 for x in xrange(0,5000)]
 	for i in range(0,len(tau)):
 		tau[i]=runI()
-        f.write(str(tau[i]) + '\n')
+        	f.write(str(tau[i]) + '\n')
 	print tau
 	plt.hist(tau, bins=15)
 	plt.show()
