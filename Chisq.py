@@ -81,7 +81,7 @@ class ChiSq:
 class ChiSqII:
     def __init__(self):
         print 'Evaluating a chisq'
-        data = np.loadtxt("testData.txt")
+        data = np.loadtxt("decayTimes.txt")
         
         self.data = data 
         

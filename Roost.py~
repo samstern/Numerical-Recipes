@@ -50,7 +50,7 @@ while (np.fabs(root_a[i]-true_root_poly_a)>tollerance and np.fabs(root_b[i]-true
 newton_poly_roots = [root_a, root_b, root_c]
 poly_numsteps = numsteps
 
-#print (root_a, root_b, root_c)
+print (root_a, root_b, root_c)
 
 
 
@@ -68,7 +68,7 @@ while np.fabs(root[i]-true_root_exp)>tollerance:
 
 newton_exp_root = root
 exp_numsteps= numsteps
-print root
+#print root
 
 
 """----------Bisection-------------------"""

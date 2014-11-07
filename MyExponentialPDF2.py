@@ -5,6 +5,7 @@ import math
 import numpy.random as rand
 import scipy.optimize as opt
 from MyGaussianPDFFinal import *
+from Minimiser import *
 
 
 
@@ -16,7 +17,7 @@ class ExponentialPDF(PDF):
         self.tau=tau
         self.maxVal=self.maxValue(a,b,stepSize)
 
-	#exponential decay function
+	#normal exponential
     def evaluate(self, x):
 	    coef=self.tau**-1
 	    expon=-x*(self.tau**-1)
@@ -39,57 +40,33 @@ class ExponentialPDF(PDF):
 
 stepSize = 0.0001
 
-#exponential decay function where tau is an input
 def fitFunc(x,t):
     return (1/t)*np.exp(-x/t)
 
-#negative log likelihood 
 def nll(vals,tau):
     return -sum([np.log2(fitFunc(vals[x],tau)) for x in range(0,len(vals))])
+#    for i in range(0,len(vals)):
+#        fitF[i] = fitFunc(vals[i],tau)
+#        if fitF[i] < 0.000000001:
+#            fitF[i] = 0.000001
+#    return -sum([np.log(fitF[x]) for x in range(0,len(fitF))])
 
-#minimises by comparing negative log likelihoods of two values of tau
 def minimize(vals):
 
-    stepSize = 0.01
-    improvement = True
-    initialTau = 2.0
-    tau=initialTau
-    currentNLL = nll(vals,tau)
-#    iterations=0
-#    print "here"
-#    a,b =opt.curve_fit(fitFunc,vals,[fitFunc(vals[x],initialTau) for x in range(0,len(vals))])
-#    return a
-    while improvement:
-        nextNLL = nll(vals, tau+stepSize)
-        if nextNLL < currentNLL:
-            tau=tau+stepSize
-            currentNLL=nextNLL
-        else:
-            improvement=False
-    return tau
+	minim = Minimiser()
 
-## My Attempt at improving the minmiser
-'''        if math.fabs(nextNLL - currentNLL) >2:
-#            print "here"
-            stepSize *=1.2
-            tau = tau+stepSize
-            currentNLL = nextNLL
-#            iterations+=1
-        elif math.fabs(nextNLL - currentNLL) >0.1:
-#            print "here2"
-            stepSize = 0.01
-            tau = tau+stepSize
-            currentNLL = nextNLL
-#            iterations+=1
-        elif math.fabs(nextNLL - currentNLL) >0.00001 and iterations <=1000:
-#            print "here3"
-            stepSize*=0.5
-            tau = tau+stepSize
-            currentNLL = nextNLL
-            iterations+=1'''
+	params     = matrix([0., 1.5]).T
+	increments = matrix([0.01, 0.01]).T
+	minim.set_StartParams(params, increments)
 
+	blah = 
 
-#generate decay times and return tau estimate				
+	while minim.get_isFinished != True:
+		params = startMinimising.minimise(blah.instance.evaluate())
+        blah.instance.setparams(params)
+		
+
+				
 def runI():
 	#defines range
     a = 0
@@ -101,6 +78,8 @@ def runI():
 
     expo=ExponentialPDF(a,b,tau)
 
+#    maxVal=expo.maxValue(a,b,stepSize) # maximum of exponential
+
 	#list of points from the exponential distribution
     values=[0 for x in range(0,targetValue)] 
     for i in range(0,targetValue):
@@ -109,24 +88,10 @@ def runI():
 
 	#Maximum Likelihood estimation of tau by taking derivative of log likelihood, setting it to 0 and solving for tau	
 #    MLEst = (sum(values))/targetValue 
+#    print MLEst
 
     tauPredicted = minimize(values)
     return tauPredicted
-
-#run program 5000 times and print expected tau values to a file	
+	
 def main():
-	f = open("decayTimes.txt","w")
-	tau = [0 for x in xrange(0,5000)]
-	for i in range(0,len(tau)):
-		tau[i]=runI()
-        	f.write(str(tau[i]) + '\n')
-	print tau
-	plt.hist(tau, bins=15)
-	plt.show()
-	f.close()
-
-
-
-if __name__=='__main__':
-    main()
-
+	f = open("decayTimesTest2.txt","w")

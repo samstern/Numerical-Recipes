@@ -1,47 +1,52 @@
-from numpy import matrix
-import numpy as np
+from   numpy import matrix 
+import numpy as     np
+
 
 class Linear:
+    'Class to evaluate y = mx + c for a given instance defined by m and c'
 
+    # Here a matrix of type matrix([m, c.]).T is used to initalise.  If no matrix is passed
+    # a default behaviour is implemented, setting m=0, c=1.
 
-	def __init__(self,i = matrix[0.,1.]):
-		self.m=i[0,0]
-		self.c=i[1,0]
+    def __init__(self, i = matrix([0., 1.]).T):
+        self.m     = i[0,0]
+        self.c     = i[1,0]
 
-	# parameters is a 2x1 matrix where (1,1) is m and (2,1) is c. Note that its actually 0 indexed (so its a 1x0 list of lists)
-	def setElements(self, parameters):
-		if parameters.shape != (2,1):
-			print "Invalid column vector, must be a (2,1) matrix."
-		else:
-			m=float(parameters[0,0])
-			c=float(parameters[0,0])
+    # This method assigns m and c for a given instance. 
 
+    def set_elements(self, j):
+        if (j.shape != (2, 1)):
+            print 'Invalid column vector, must be a (2,1) matrix for assignment.'
 
-	def evaluate(self, x):
-		return self.m*x+self.c
+        self.m = float(j[0,0])
+        self.c = float(j[1,0])
 
-   # Here we vectorize a function.  Having defined a function eval which acts on a scalar
+    # This is the evaluate method for a single data point.     
+    def eval(self, x):
+        return self.m*x + self.c
+
+    # Here we vectorize a function.  Having defined a function eval which acts on a scalar
     # (i.e number) and returns a scalar, vecfn = vectorize(eval) gives us a function vecfn which 
     # will act on np.arrays or matrices and returns a np.array or matrix in which "out_array[i]"
     # is "eval(in_array[i])" **(pseudocode)**.
 
-	def vectorEvaluate(self, j):
-		vecfn = np.vectorize(self.evaluate)
-		return vecfn
+    def veval(self, j):
+        vecfn  = np.vectorize(self.eval) 
+        return vecfn(j)
+        
 
 class ChiSq:
-	
-	    'Class to provide a method to calculate chisq'
+    'Class to provide a method to calculate chisq'
 
-    # This is the constructor which sets up the vectors (data x and y) and matrices (inverse error matrix)    
-	
-	def __init__(self,xin=matrix([]).T, yin = matrix([]).T, ein=matrix([]).T):
-		self.xdata  = xin
+    # This is the constructor which sets up the vectors (data x and y) and matrices (inverse error matrix)     
+    
+    def __init__(self, xin=matrix([]).T, yin=matrix([]).T, ein=matrix([]).T):
+        self.xdata  = xin
         self.ydata  = yin
         self.edata  = ein
-        self.linear = Linear() 
+        self.linear = Linear()
 
- # Do some checks                                                                                                   
+        # Do some checks                                                                                                   
         if(xin.shape == yin.shape == ein.shape and xin.shape[1] == 1 and xin.shape[0] != 0):
             # This bit constructs the error matrix and takes its inverse                                           
             self.cov    = matrix(np.diag(np.diag(self.edata*self.edata.T)))
@@ -55,20 +60,28 @@ class ChiSq:
 
         else:
             print("input x-y-e dimension error")
+     
+    # To pass in a new set of parsmeters, in this case m & c                                                               
+    def setparams(self, params):
+        self.linear.set_elements(params)  
 
-	def setParameters(self, params):
-		self.linear.setPElements(params)
+    # Evaluate the chisq                                                                                                                                                      
+    def evaluate(self):
+        # Create a vector of theoretical points                                                                            
+        yth = self.linear.veval(self.xdata)                                                                                                                                  
+        # Take the difference                                                                                              
+        diff = self.ydata - yth
+                
+        # Finally form the chisq                                                                                           
+        chiSq  = diff.T*self.Icov*diff            
+        
+        return chiSq[0,0] 
 
-	def evaluate(self):
-		yPred=self.linear.veval(xdata)
-		diff = self.ydata-yPred
-		chisq = diff.T*Icov*diff
-		return chisq[0][0]
 
 class ChiSqII:
     def __init__(self):
         print 'Evaluating a chisq'
-        data = np.loadtxt("testData.txt")
+        data = np.loadtxt("decay times.txt")
         
         self.data = data 
         

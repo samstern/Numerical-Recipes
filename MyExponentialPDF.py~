@@ -116,8 +116,8 @@ def runI():
     return tauPredicted
 	
 def main():
-	f = open("decayTimesTest.txt","w")
-	tau = [0 for x in xrange(0,1000)]
+	f = open("decayTimes.txt","w")
+	tau = [0 for x in xrange(0,5000)]
 	for i in range(0,len(tau)):
 		tau[i]=runI()
         	f.write(str(tau[i]) + '\n')
