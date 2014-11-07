@@ -1,0 +1,42 @@
+import sys
+import numpy as np
+
+def polynomial(x):
+	return x**3 - 2.1*x**2 - 7.4*x + 10.2
+def exponential(x):
+    return np.exp(x)-2
+
+#def f(x):
+#    pass
+    
+	
+def bisection(a,b,tol, function):
+    if function == 'polynomial':
+        f = lambda x: polynomial(x)
+    elif function == "exponential":
+        f = lambda x: exponential(x)
+    else:
+        sys.exit('<function> must be either polynomial or exponential')
+    c = (a+b)/2.0
+    while (b-a)/2.0 > tol:
+	    if f(c) == 0:
+	       	return c
+	    elif f(a)*f(c) < 0:
+	       	b = c
+	    else:
+	       	a = c
+	    c = (a+b)/2.0
+		
+    return c
+	
+def main(argv):
+	if (len(sys.argv) != 5):
+		sys.exit('Usage: bisection.py <a> <b> <tol> <function>')
+	
+	print 'The root is: ',
+	print bisection(float(sys.argv[1]),float(sys.argv[2]),float(sys.argv[3]), sys.argv[4])
+
+if __name__ == "__main__":
+	main(sys.argv[1:])
+
+
