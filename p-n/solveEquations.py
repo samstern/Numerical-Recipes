@@ -1,72 +1,39 @@
 
 from functions import *
-import numpy
+import numpy.fft as fft
 import scipy.integrate as integrate 
+from Runge_Kutta import *
+import math
+import numpy as np
 
 
 
-def electricField(y0,n,h, boundries):
-	"""
-Method for solving dE(x)/dx=p(x) where p is the charge density of a p-n junction
-
-    Usage:
-	y = electricField(y0,n,h,boundries)
-
-    Input:
-	y0 - the initial conditions, the value of y at x=0.
-	n - the nuber of iterations for each "section" of the function
-	h - the height of p(x)
-	boundries - x co-ordinates of the discontinuities in p(x)
-
-    Output:
-	x - numpy array of x values
-	y - values of E(x) at each point in x
-	"""
-
-	x1 = numpy.linspace( y0, boundries[0], n )
-	x2 = numpy.linspace( boundries[0], boundries[1], n )
-    	x3 = numpy.linspace( boundries[1], boundries[2], n )
-    	x4 = numpy.linspace( boundries[2], boundries[3], n )
-
-    	y_rk4_1 = integrate.odeint(rho,y0,x1,args=(h,))
 
 
-    	y01 = y_rk4_1[-1]	# "initial condition" for second section is the value of y at the end of the first interval
-    	y_rk4_2 = integrate.odeint(rho,y01,x2,args=(h,))
+def electricField(y0,x,h, boundry):
 
-    	y02 = y_rk4_2[-1]
-    	y_rk4_3 = integrate.odeint(rho,y02,x3,args=(h,))
-
-    	y03 = y_rk4_3[-1]
-    	y_rk4_4 = integrate.odeint(rho,y03,x4,args=(h,))
-
-    	x = numpy.concatenate([x1,x2,x3,x4])    
-    	y = numpy.concatenate([y_rk4_1,y_rk4_2,y_rk4_3,y_rk4_4])
-
-    	return x, y[:,0]
+	y = rk(rho, y0, x,h)
+	return x, y
 
 #----------------------------------------------------------
 
-def voltage(y0,es):
+def voltage(y0,x,e_field,boundry):
 
-	e1 = es[0:52]#int((len(es)*0.25))-1]
-	e2 = es[52:104]#[int((len(es)*0.25)):int((len(es)*0.5))-1]
-	e3 = es[104:156]#[int((len(es)*0.5)):int((0.75*(len(es))))-1]
- 	e4 = es[156:-1]#[int(0.75*len(es)):len(es)-1]
-
-	y_rk4_1 = integrate.odeint(pd,y0,e1)
-	print "here"
-	y01 = y_rk4_1[-1]	# "initial condition" for second section is the value of y at the end of the first interval
-	y_rk4_2 = integrate.odeint(pd,y01,e2)
-
-	y02 = y_rk4_2[-1]
-	y_rk4_3 = integrate.odeint(pd,y02,e3)
-
-	y03 = y_rk4_3[-1]
-	y_rk4_4 = integrate.odeint(pd,y03,e4)
-
-	x = numpy.concatenate([e1,e2,e3,e4])    
-	y = numpy.concatenate([y_rk4_1,y_rk4_2,y_rk4_3,y_rk4_4])
-
+	y = rk(negE,y0,x,e_field)
 	return x, y
 
+#----------------------------------------------------------
+
+def fourier(y0,xs,h):
+
+	rhos = [rho(1,x,h[0]) for x in xs]
+	trans_rho = fft.fft(rhos)
+	i = np.complex(0,1)
+	print i
+	trans_e = [np.complex(0,0) if n ==0+0j
+	 else (trans_rho[n])*(1/(i*math.pi*n*0.5)) for n in range(0,len(xs))]
+	e_field = fft.ifft(trans_e)
+
+	correction = 0- e_field[0]
+	e_field = e_field+correction
+	return xs, e_field*2 #why do i need to *2? write to lecturer

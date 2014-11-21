@@ -14,5 +14,5 @@ def rho(y,x,h):
 	else:
 		return 0
 
-def pd(y,e):
-	return -e
+def negE(y,x, electric):
+	return -electric

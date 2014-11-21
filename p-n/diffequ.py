@@ -1,15 +1,3 @@
-"""A variety of methods to solve first order ordinary differential equations.
-
-AUTHOR:
-    Jonathan Senning <jonathan.senning@gordon.edu>
-    Gordon College
-    Based Octave functions written in the spring of 1999
-    Python version: March 2008, October 2008
-"""
-
-
-
-#from rk4 import *
 import numpy 
 from functions import *
 from solveEquations import *
@@ -22,16 +10,20 @@ if __name__ == "__main__":
     from pylab import *
 
     y0 = 0
-    h = 2
-    n = 52
-    boundries = [1,2,3,4]
-    x_e,e_field = electricField(y0,n,h,boundries)
-    #print e_field
-    #print x_e
-    #x_v,volt = voltage(y0,e_field)
-	
+    n = 1000
+    h = [1 for x in range(0,n)]
+    boundry = 4
+    x = numpy.linspace( y0, boundry, n)
 
-    plot(x_e,e_field)
+    #find the electric field
+    x_e,e_field = electricField(y0,x,h,boundry)
+
+    #find the potential
+    x_v,volt = voltage(y0,x_e,e_field,boundry)
+
+    x_f,e_fourier = fourier(y0,x,h)
+
+    plot(x_f,e_fourier)
     title( 'Solutions of $dE/dx =p(x) $y(0)=0$' )
     ylabel('E(x)')
     xlabel('x')
