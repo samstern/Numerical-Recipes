@@ -26,12 +26,12 @@ if __name__ == "__main__":
     n = 52
     boundries = [1,2,3,4]
     x_e,e_field = electricField(y0,n,h,boundries)
-    print e_field
-    print x_e
-    x_v,volt = voltage(y0,e_field)
+    #print e_field
+    #print x_e
+    #x_v,volt = voltage(y0,e_field)
 	
 
-    plot(x_e,x_v)
+    plot(x_e,e_field)
     title( 'Solutions of $dE/dx =p(x) $y(0)=0$' )
     ylabel('E(x)')
     xlabel('x')
