@@ -1,10 +1,9 @@
 """
-All functions are defined in this class. T
+All functions are defined in this class. 
+They are the rhs of each differential equation
 """
 
 def rho(y,x,h):
-#Charge density of a p-n junction
-
 	if x<=1:
 		return 0
 	elif x<=2 :
@@ -16,3 +15,7 @@ def rho(y,x,h):
 
 def negE(y,x, electric):
 	return -electric
+
+
+
+

@@ -1,37 +1,40 @@
 import numpy
 
-def rk( f, x0, t ,args):
-    """Fourth-order Runge-Kutta method to solve x' = f(x,t) with x(t[0]) = x0.
+def rk( f, y0, x ,args):
+    """Fourth-order Runge-Kutta method to solve y' = f(y,x) with y(x[0]) = y0.
 
     USAGE:
-        x = rk4(f, x0, t)
+        y = rk4(f, y0, x)
 
     INPUT:
-        f     - function of x and t equal to dx/dt.  x may be multivalued,
+        f     - function of y and x equal to dy/dx.  y may be multivalued,
                 in which case it should a list or a NumPy array.  In this
                 case f must return a NumPy array with the same dimension
-                as x.
-        x0    - the initial condition(s).  Specifies the value of x when
-                t = t[0].  Can be either a scalar or a list or NumPy array
+                as y.
+        y0    - the initial condition(s).  Specifies the value of y when
+                x = x[0].  Can be either a scalar or a list or NumPy array
                 if a system of equations is being solved.
-        t     - list or NumPy array of t values to compute solution at.
-                t[0] is the the initial condition point, and the difference
-                h=t[i+1]-t[i] determines the step size h.
+        x     - list or NumPy array of x values to compute solution at.
+                x[0] is the the initial condition point, and the difference
+                h=x[i+1]-x[i] determines the step size h.
+        args  - The arguments of function f. Must be an list at least as
+                long as x.
 
     OUTPUT:
-        x     - NumPy array containing solution values corresponding to each
-                entry in t array.  If a system is being solved, x will be
+        y     - NumPy array containing solution values corresponding to each
+                entry in x array.  If a system is being solved, y will be
                 an array of arrays.
     """
-    n = len( t )
-    x = numpy.zeros( n )
-    x[0] = x0
+    n = len( x )
+    y = numpy.zeros( n )
+    y[0] = y0
     for i in xrange( n - 1 ):
-        h = t[i+1] - t[i]
-        k1 = h * f( x[i], t[i],args[i] )
-        k2 = h * f( x[i] + 0.5 * k1, t[i] + 0.5 * h, args[i] )
-        k3 = h * f( x[i] + 0.5 * k2, t[i] + 0.5 * h, args[i] )
-        k4 = h * f( x[i] + k3, t[i+1], args[i] )
-        x[i+1] = x[i] + (( k1 + 2.0 * ( k2 + k3 ) + k4 ) / 6.0)
+        h = x[i+1] - x[i]
+        k1 = h * f( y[i], x[i],args[i] )
+        k2 = h * f( y[i] + 0.5 * k1, x[i] + 0.5 * h, args[i] )
+        k3 = h * f( y[i] + 0.5 * k2, x[i] + 0.5 * h, args[i] )
+        k4 = h * f( y[i] + k3, x[i+1], args[i] )
+        y[i+1] = y[i] + (( k1 + 2.0 * ( k2 + k3 ) + k4 ) / 6.0)
 
-    return x
+    return y
+
